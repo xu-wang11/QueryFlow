@@ -14,9 +14,15 @@ class RestUtils {
       	//$flag = false;
         if($params[3]== "query")
         {
+        	if(count($params) < 8)
+        	{
+        		RestUtils::sendResponse(404);
+        	}
         	$srcip = $params[4];
-        	$dstip = $params[5];
-        	$flows = RestUtils::fetchFlow("http://localhost:8080", $srcip,$dstip);
+        	$srcport = $params[5];
+        	$dstip = $params[6];
+        	$dstport = $params[7];
+        	$flows = RestUtils::fetchFlow("http://localhost:8080", $srcip,$srcport, $dstip, $dstport);
         }
         else if($params[3] == "filter")
         {
@@ -289,7 +295,7 @@ class RestUtils {
     	return $flows;
     }
     //query/srcip/dstip
-	public static function fetchFlow($host, $srcip, $destip)
+	public static function fetchFlow($host, $srcip, $srcport, $destip, $destport)
 	{
 		$len = strlen($host);
 		if($host[$len - 1] != '/')
@@ -307,118 +313,42 @@ class RestUtils {
 		curl_close($flow_url);
 		$flow_array = json_decode($flow, true);
 		
-		//-------get all host lists.------------
-		$device = curl_init($host . "wm/device/");
-		
-		
-		
-		curl_setopt($device, CURLOPT_POST, false);
-		curl_setopt($device, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($device, CURLOPT_RETURNTRANSFER, true );
-		
-		curl_setopt($device, CURLOPT_SSL_VERIFYPEER, false);
-
-		
-		
-		$nodes=curl_exec($device);
-		// Closing
-		curl_close($device);
-		$node_array = json_decode($nodes, true);
-		// ip addr to mac addr
-		$srcmac = array();
-		$destmac = array();
-		if($srcip == "*")
-		{
-			foreach ($node_array as $node)
-			{
-				foreach($node['mac'] as $macaddr)
-				{
-					$srcmac[] = $macaddr;
-				}
-			}
-		}
-		
-		foreach ($node_array as $node)
-		{
-			if($srcip == '*')
-			{
-				foreach($node['mac'] as $macaddr)
-				{
-					$srcmac[] = $macaddr;
-				}
-			}
-			else 
-			{
-				foreach($node['ipv4'] as $ipaddr)
-				{
-					if($ipaddr == $srcip)
-					{
-						foreach($node['mac'] as $macaddr)
-						{
-							$srcmac[] = $macaddr;
-						}
-					}	
-				}
-			}
-		
-			if($destip == '*')
-			{
-				foreach($node['mac'] as $macaddr)
-				{
-					$destmac[] = $macaddr;
-				}
-			}
-			else
-			{
-				foreach($node['ipv4'] as $ipaddr)
-				{
-					if($ipaddr == $destip)
-					{
-						foreach($node['mac'] as $macaddr)
-						{
-							$destmac[] = $macaddr;	
-						}
-					}
-				}
-				
-			}
-		}
-		//status
-		$status = "";
-		if(count($srcmac) == 0)
-			$status = "src ip not found,";
-		if(count($destmac) == 0)
-			$status = $status."dest ip not found";
-		if(strlen($status) == 0)
-		{
-			$status = "success";
-		}
+		$status = "Sucess";
 		//filter flows information;
 		$result = array('flows'=>array(), 'status'=>$status);
 		foreach($flow_array as $switch_flows)
 		{
 			foreach($switch_flows as $flow_ele)
 			{
-				$flow_src = $flow_ele['match']['dataLayerSource'];
-				$flow_dest = $flow_ele['match']['dataLayerDestination'];
-				foreach($srcmac as $src_ele)
-				{
-					if($src_ele == $flow_src)
+				
+				
+				try {
+					$flow_src = $flow_ele['match']['networkSource'];
+					$flow_dest = $flow_ele['match']['networkDestination'];
+					$flow_src_port = $flow_ele['match']['transportSource'];
+					$flow_dst_port = $flow_ele['match']['transportDestination'];
+					if(($srcip == '*' || $srcip == $flow_src) && ($srcport == "*" || $srcport == $flow_src_port))
 					{
-						foreach($destmac as $dest_ele)
+							
+						if(($destip == '*' || $destip == $flow_dest) && ($destport == "*" || $destport == $flow_dst_port))
 						{
-							if($dest_ele == $flow_dest)
-							{
-								$result['flows'][] = $flow_ele;
-								break;
-							}
+					
+							$result['flows'][] = $flow_ele;
+							
+					
 						}
-						break;
+							
+							
 					}
+				} catch (Exception $e) {
+					echo "no flow attr";
+					$result['status'][] = "failed";
 				}
+				
 			}
-			
 		}
+			
+		
 		return $result;
 			
 			
