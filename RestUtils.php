@@ -1,5 +1,17 @@
 <?php
 require_once('RestRequest.php');
+class NumberGenerator
+{
+	public static $number = 0;
+	public static function getNextNum()
+	{
+		NumberGenerator::$number += 1;
+		if(NumberGenerator::$number == 100000000)
+			NumberGenerator::$number = 0;
+		return NumberGenerator::$number;
+	}
+}
+
 class RestUtils {
     public static function processRequest()
     {
@@ -49,6 +61,14 @@ class RestUtils {
         	RestUtils::deleteRules('http://localhost:8080');
         	return;
         }
+        else if($params[3] == "pushflow")
+        {
+        	$srcip = $params[4];
+        	$srcport = $params[5];
+        	$dstip = $params[6];
+        	$dstport = $params[7];
+        	$flows = RestUtils::pushFlow('http://localhost:8080', $srcip, $srcport, $dstip, $dstport);
+        }
         else
         {
         	RestUtils::sendResponse(404);
@@ -62,6 +82,87 @@ class RestUtils {
 
     }
     
+    /**
+     *  get switch information from floodlight controller /wm/core/controller/switches/json
+     * @param unknown $host
+     * @return multitype: switch json
+     */
+    public static function getSwitches($host)
+    {
+
+    	$len = strlen($host);
+    	if($host[$len - 1] != '/')
+    		$host = $host . "/";
+    	$headers = array(
+    			'Content-Type: application/json',
+    	);
+    	$device = curl_init($host . "/wm/core/controller/switches/json");
+    	curl_setopt($device, CURLOPT_POST, false);
+    	curl_setopt($device, CURLOPT_HTTPHEADER, $headers);
+    	curl_setopt($device, CURLOPT_RETURNTRANSFER, true );
+    	curl_setopt($device, CURLOPT_SSL_VERIFYPEER, false);
+    	$nodes=curl_exec($device);
+    	// Closing
+    	curl_close($device);
+    	$node_array = json_decode($nodes, true);
+    	return $node_array;
+    	
+    }
+    
+    /**
+     * 
+     * @param unknown $host
+     * @param unknown $srcip
+     * @param unknown $srcport
+     * @param unknown $dstip
+     * @param unknown $dstport
+     */
+    public static function pushFlow($host, $srcip, $srcport, $dstip, $dstport)
+    {
+    	$len = strlen($host);
+    	if($host[$len - 1] != '/')
+    		$host = $host . "/";
+    	$headers = array(
+    			'Content-Type: application/json',
+    	);
+    	$switches = RestUtils::getSwitches($host);
+    	foreach($switches as $switch)
+    	{
+    		$json = array();
+    		$json['switch']= $switch['dpid'];
+    		if($srcip != "*")
+    			$json['src-ip'] = $srcip;
+    		if($dstip != "*")
+    			$json['dst-ip'] = $dstip;
+    		if($srcport != "*")
+    			$json['src-port'] = $srcport;
+    		if($dstport != "*")
+    			$json['dst-port'] = $dstport;
+    		$json['name'] = 'push-flow-'.NumberGenerator::getNextNum();
+    		$json['cookie'] = '0';
+    		$json['priority'] = '1';
+    		$json['ether-type'] = '2048';
+    		$json['protocol'] = '6';
+    		$json['actions'] = 'output=4';
+    		$json['active'] = 'true';
+    		
+    		$ch = curl_init($host . "wm/staticflowentrypusher/json");
+    		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+    		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($json));
+    		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    		$result = curl_exec($ch);
+    		// Closing
+    		curl_close($ch);
+			return $result;    		
+    	}
+    }
+    
+    /**
+     * 
+     * @param unknown $host
+     * @return mixed
+     */
     public static function getRules($host)
     {
     	$len = strlen($host);
