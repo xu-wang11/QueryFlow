@@ -27,9 +27,10 @@ class RestUtils {
 				RestUtils::sendResponse ( 404 );
 				return;
 			}
-			$srcip = $params [5];
-			$dstip = $params [6];
-			$flows = RestUtils::installFilter ( 'http://localhost:8080', $srcip, $dstip, $action );
+			$protocol = $params[5];
+			$srcip = $params [6];
+			$dstip = $params [7];
+			$flows = RestUtils::installFilter ( 'http://localhost:8080', $srcip, $dstip, $action, $protocol );
 		} 		// delete all firewall rule.
 		else if ($params [3] == "delete") {
 			RestUtils::deleteRules ( 'http://localhost:8080' );
@@ -308,7 +309,8 @@ class RestUtils {
 	 * @param sting $destip        	
 	 * @return json status
 	 */
-	public static function installFilter($host, $srcip, $destip, $action) {
+	public static function installFilter($host, $srcip, $destip, $action, $protocol) {
+	
 		$len = strlen ( $host );
 		if ($host [$len - 1] != '/')
 			$host = $host . "/";
@@ -382,10 +384,19 @@ class RestUtils {
 					}
 				}
 				//
+				if(strpos($src, "/") ===FALSE)
+				{
+					$src = $src."/32";
+				}
+				if(strpos($dest, "/") === FALSE)
+				{
+					$dst = $dst."/32";
+				}
 				$install_filter = array (
-						"src-ip" => $src . "/32",
-						"dst-ip" => $dest . "/32",
-						"action" => $action 
+						"src-ip" => $src,
+						"dst-ip" => $dest,
+						"action" => $action,
+						"nw-proto"=>$protocol 
 				);
 				$data_string = json_encode ( $install_filter );
 				$ch = curl_init ( $host . "wm/firewall/rules/json" );
