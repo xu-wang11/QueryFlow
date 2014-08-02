@@ -27,7 +27,7 @@ class RestUtils {
 				RestUtils::sendResponse ( 404 );
 				return;
 			}
-			$protocol = $params[5];
+			$protocol = $params [5];
 			$srcip = $params [6];
 			$dstip = $params [7];
 			$flows = RestUtils::installFilter ( 'http://localhost:8080', $srcip, $dstip, $action, $protocol );
@@ -42,35 +42,28 @@ class RestUtils {
 			$dstip = $params [6];
 			$dstport = $params [7];
 			$flows = RestUtils::pushFlow ( 'http://localhost:8080', $srcip, $srcport, $dstip, $dstport );
-		}
-		else if($params[3] == "deleteflow"){
+		} else if ($params [3] == "deleteflow") {
 			$srcip = $params [4];
 			$srcport = $params [5];
 			$dstip = $params [6];
 			$dstport = $params [7];
-			$flows = RestUtils::deleteflow('http://localhost:8080', $srcip, $srcport, $dstip, $dstport );
-			
-			
-		}
-		else if($params[3] == "deletefilter"){
-			$srcip = $params[4];
-			$dstip = $params[5];
-			$flows = RestUtils::deleteRules('http://localhost:8080', $srcip, $dstip);
-		} 
-		else {
+			$flows = RestUtils::deleteflow ( 'http://localhost:8080', $srcip, $srcport, $dstip, $dstport );
+		} else if ($params [3] == "deletefilter") {
+			$srcip = $params [4];
+			$dstip = $params [5];
+			$flows = RestUtils::deleteRules ( 'http://localhost:8080', $srcip, $dstip );
+		} else {
 			RestUtils::sendResponse ( 404 );
 			return;
 		}
 		return $flows;
 	}
-	
-	public static function getAllflow($host= "http://localhost:8080")
-	{
+	public static function getAllflow($host = "http://localhost:8080") {
 		$len = strlen ( $host );
 		if ($host [$len - 1] != '/')
 			$host = $host . "/";
 		$headers = array (
-				'Content-Type: application/json'
+				'Content-Type: application/json' 
 		);
 		$device = curl_init ( $host . "/wm/staticflowentrypusher/list/all/json" );
 		curl_setopt ( $device, CURLOPT_POST, false );
@@ -82,58 +75,50 @@ class RestUtils {
 		curl_close ( $device );
 		$node_array = json_decode ( $nodes, true );
 		return $node_array;
-		
 	}
 	
 	/**
-	 * 
-	 * @param string $host
-	 * @param string $srcip
-	 * @param string $srcport
-	 * @param string $dstip
-	 * @param string $dstport
+	 *
+	 * @param string $host        	
+	 * @param string $srcip        	
+	 * @param string $srcport        	
+	 * @param string $dstip        	
+	 * @param string $dstport        	
 	 * @return multitype:
 	 */
-	public static function deleteflow($host = "http://localhost:8080", $srcip, $srcport, $dstip, $dstport)
-	{
-		$flows = RestUtils::getAllflow($host);
+	public static function deleteflow($host = "http://localhost:8080", $srcip, $srcport, $dstip, $dstport) {
+		$flows = RestUtils::getAllflow ( $host );
 		$len = strlen ( $host );
 		if ($host [$len - 1] != '/')
 			$host = $host . "/";
 		$headers = array (
-				'Content-Type: application/json'
+				'Content-Type: application/json' 
 		);
-		$result = array();
-		foreach($flows as $flow)
-		{
-			foreach ($flow as $flow_name=>$flow_content)
-			{
-			if(($srcip == '*' || $srcip == $flow_content['match']['networkSource'])
-				&&($dstip == '*' || $dstip == $flow_content['match']['networkDestination'])
-				&&($srcport == '*' || $srcport == $flow_content['match']['transportSource'])
-				&&($dstport == '*' || $dstport == $flow_content['match']['transportDestination']))
-			{
-				$json = array (
-						"name" => $flow_name
-				);
-				$ch = curl_init ( $host . "wm/staticflowentrypusher/json" );
-				curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "DELETE" );
-				curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode ( $json ) );
-				curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
-				curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
-				curl_exec ( $ch );
-				// Closing
-				$result[$flow_name] = 'entry deleted.';
-				curl_close ( $ch );
-			}
+		$result = array ();
+		foreach ( $flows as $flow ) {
+			foreach ( $flow as $flow_name => $flow_content ) {
+				if (($srcip == '*' || $srcip == $flow_content ['match'] ['networkSource']) && ($dstip == '*' || $dstip == $flow_content ['match'] ['networkDestination']) && ($srcport == '*' || $srcport == $flow_content ['match'] ['transportSource']) && ($dstport == '*' || $dstport == $flow_content ['match'] ['transportDestination'])) {
+					$json = array (
+							"name" => $flow_name 
+					);
+					$ch = curl_init ( $host . "wm/staticflowentrypusher/json" );
+					curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "DELETE" );
+					curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode ( $json ) );
+					curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
+					curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
+					curl_exec ( $ch );
+					// Closing
+					$result [$flow_name] = 'entry deleted.';
+					curl_close ( $ch );
+				}
 			}
 		}
-		return $result;   
+		return $result;
 	}
 	
 	/**
 	 * get switch information from floodlight controller /wm/core/controller/switches/json
-	 * 
+	 *
 	 * @param string $host        	
 	 * @return multitype: switch json
 	 */
@@ -158,7 +143,7 @@ class RestUtils {
 	
 	/**
 	 * push flow to controller
-	 * 
+	 *
 	 * @param string $host        	
 	 * @param string $srcip        	
 	 * @param string $srcport        	
@@ -207,7 +192,7 @@ class RestUtils {
 	
 	/**
 	 * get all firewall rules
-	 * 
+	 *
 	 * @param string $host        	
 	 * @return json rules
 	 */
@@ -232,7 +217,7 @@ class RestUtils {
 	
 	/**
 	 * delete all rules.
-	 * 
+	 *
 	 * @param string $host        	
 	 * @return no return
 	 */
@@ -254,29 +239,29 @@ class RestUtils {
 		$node_array = json_decode ( $nodes, true );
 		$count = 0;
 		foreach ( $node_array as $rule ) {
-			if(($srcip == '*' || $rule['nw_src_prefix'] == $srcip)
-				&&($dstip == '*' || $rule['nw_dst_prefix'] == $dstip))
-			{
-			$json = array (
-					"ruleid" => $rule ['ruleid'] 
-			);
-			$ch = curl_init ( $host . "wm/firewall/rules/json" );
-			curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "DELETE" );
-			curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode ( $json ) );
-			curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
-			curl_exec ( $ch );
-			// Closing
-			curl_close ( $ch );
-			$count ++;
+			if (($srcip == '*' || $rule ['nw_src_prefix'] == $srcip) && ($dstip == '*' || $rule ['nw_dst_prefix'] == $dstip)) {
+				$json = array (
+						"ruleid" => $rule ['ruleid'] 
+				);
+				$ch = curl_init ( $host . "wm/firewall/rules/json" );
+				curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "DELETE" );
+				curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode ( $json ) );
+				curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
+				curl_exec ( $ch );
+				// Closing
+				curl_close ( $ch );
+				$count ++;
+			}
 		}
-		}
-		$result = array("status"=>$count." rules deleted.");
+		$result = array (
+				"status" => $count . " rules deleted." 
+		);
 		return $result;
 	}
 	
 	/**
 	 * get all devices; this method didn't work well because the controller don't always record all devices if some device don't work for some time.
-	 * 
+	 *
 	 * @param string $host        	
 	 * @param
 	 *        	json all Device
@@ -302,7 +287,7 @@ class RestUtils {
 	
 	/**
 	 * install filter
-	 * 
+	 *
 	 * @param string $host,
 	 *        	controller server ip.
 	 * @param string $srcip        	
@@ -311,152 +296,71 @@ class RestUtils {
 	 * @todo the "*" handle isn't complemented well.
 	 */
 	public static function installFilter($host, $srcip, $destip, $action, $protocol) {
-	
 		$len = strlen ( $host );
 		if ($host [$len - 1] != '/')
 			$host = $host . "/";
 		$headers = array (
 				'Content-Type: application/json' 
 		);
-		$devices = RestUtils::getDevices ( $host );
+		$srcmask = 32;
+		$dstmask = 32;
+		if ($srcip != "*") {
+			$start = strpos ( $srcip, ":" );
+			if ($start !== FALSE) {
+				$srcmask = substr ( $srcip, $start + 1);
+				$srcip = substr ( $srcip, 0, $start );
+			}
+		}
+		if ($destip != "*") {
+			$start = strpos ( $destip, ":" );
+			if ($start !== FALSE) {
+				$dstmask = substr ( $destip, $start + 1 );
+				$destip = substr ( $destip, 0, $start );
+			}
+		}
+		
 		$rules = RestUtils::getRules ( $host );
-		$ipaddrs = array ();
-		foreach ( $devices as $ipaddr ) {
-			$ipaddrs [] = $ipaddr ['ipv4'];
-		}
-		$status = "";
-		if ($srcip == "*") {
-			$srcarray = array ();
-			foreach ( $ipaddrs as $ipaddr ) {
-				foreach ( $ipaddr as $ip )
-					$srcarray [] = $ip;
-			}
-		} else {
-			foreach ( $ipaddrs as $ips ) {
-				foreach ( $ips as $ip ) {
-					if ($ip == $srcip) {
-						$srcarray = array (
-								$ip 
-						);
-						break;
-					}
-				}
-			}
-		}
-		if (count ( $srcarray ) == 0) {
-			$status .= "no Src found; ";
-		}
-		if ($destip == "*") {
-			$destarray = array ();
-			foreach ( $ipaddrs as $ipaddr ) {
-				foreach ( $ipaddr as $ip )
-					$destarray [] = $ip;
-			}
-		} else {
-			foreach ( $ipaddrs as $ips ) {
-				foreach ( $ips as $ip ) {
-					if ($ip == $destip) {
-						$destarray = array (
-								$ip 
-						);
-						break;
-					}
-				}
-			}
-		}
-		if (count ( $destip ) == 0) {
-			$status .= "No dest found. ";
-		}
-		foreach ( $srcarray as $src ) {
-			foreach ( $destarray as $dest ) {
-				// delete out-date rules
-				foreach ( $rules as $rule ) {
-					if ($rule ['nw_src_prefix'] == $src && $rule ['nw_dst_prefix'] == $dest) {
-						$json = array (
-								"ruleid" => $rule ['ruleid'] 
-						);
-						$ch = curl_init ( $host . "wm/firewall/rules/json" );
-						curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "DELETE" );
-						curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode ( $json ) );
-						curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
-						curl_exec ( $ch );
-						// Closing
-						curl_close ( $ch );
-					}
-				}
-				//
-				if(strpos($src, "/") ===FALSE)
-				{
-					$src = $src."/32";
-				}
-				if(strpos($dest, "/") === FALSE)
-				{
-					$dst = $dst."/32";
-				}
-				$install_filter = array (
-						"src-ip" => $src,
-						"dst-ip" => $dest,
-						"action" => $action,
-						"nw-proto"=>$protocol 
+		// delete out-date rules
+		foreach ( $rules as $rule ) {
+			if (($srcip == '*' || ($rule ['nw_src_prefix'] == $srcip)) && ($destip == '*' || $rule ['nw_dst_prefix'] == $destip)) {
+				$json = array (
+						"ruleid" => $rule ['ruleid'] 
 				);
-				$data_string = json_encode ( $install_filter );
 				$ch = curl_init ( $host . "wm/firewall/rules/json" );
-				curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
-				curl_setopt ( $ch, CURLOPT_POSTFIELDS, $data_string );
+				curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "DELETE" );
+				curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode ( $json ) );
 				curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
-				curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
-						'Content-Type: application/json',
-						'Content-Length: ' . strlen ( $data_string ) 
-				) );
-				$result = curl_exec ( $ch );
+				curl_exec ( $ch );
+				// Closing
 				curl_close ( $ch );
-				$result = json_decode ( $result, true );
-				$install_filter = array (
-						"src-ip" => $src . "/32",
-						"dst-ip" => $dest . "/32",
-						"action" => $action,
-						"dl-type" => "ARP" 
-				);
-				$data_string = json_encode ( $install_filter );
-				$ch = curl_init ( $host . "wm/firewall/rules/json" );
-				curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
-				curl_setopt ( $ch, CURLOPT_POSTFIELDS, $data_string );
-				curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
-				curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
-						'Content-Type: application/json',
-						'Content-Length: ' . strlen ( $data_string ) 
-				) );
-				$result = curl_exec ( $ch );
-				curl_close ( $ch );
-				$result = json_decode ( $result, true );
-				// $status .= $result['status'];
-				$install_filter = array (
-						"src-ip" => $src . "/32",
-						"dst-ip" => $dest . "/32",
-						"action" => $action,
-						"nw-proto" => "ICMP" 
-				);
-				$data_string = json_encode ( $install_filter );
-				$ch = curl_init ( $host . "wm/firewall/rules/json" );
-				curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
-				curl_setopt ( $ch, CURLOPT_POSTFIELDS, $data_string );
-				curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
-				curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
-						'Content-Type: application/json',
-						'Content-Length: ' . strlen ( $data_string ) 
-				) );
-				$result = curl_exec ( $ch );
-				curl_close ( $ch );
-				$result = json_decode ( $result, true );
-				// $status .= $result['status'];
 			}
 		}
-		if (strlen ( $status ) == 0)
-			$status = "success";
-		$flows = array (
-				"status" => $status 
-		);
-		return $flows;
+		$install_filter = array();
+		if($srcip != '*')
+		{
+			$install_filter['src-ip'] = $srcip.'/'.$srcmask;
+		}
+		if($destip != '*')
+		{
+			$install_filter['dst-ip'] = $destip.'/'.$dstmask;
+		}
+		$install_filter['action'] = $action;
+		$install_filter['nw-proto'] = $protocol;
+		$data_string = json_encode ( $install_filter );
+		$ch = curl_init ( $host . "wm/firewall/rules/json" );
+		curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
+		curl_setopt ( $ch, CURLOPT_POSTFIELDS, $data_string );
+		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
+				'Content-Type: application/json',
+				'Content-Length: ' . strlen ( $data_string ) 
+		) );
+		$flow = curl_exec ( $ch);
+		curl_close ($ch);
+		
+		// $status .= $result['status'];
+		
+		return json_decode($flow);
 	}
 	// query/srcip/dstip
 	public static function fetchFlow($host, $srcip, $srcport, $destip, $destport) {
@@ -504,7 +408,7 @@ class RestUtils {
 	
 	/**
 	 * send response.
-	 * 
+	 *
 	 * @param number $status        	
 	 * @param string $body        	
 	 * @param string $content_type        	
@@ -568,7 +472,7 @@ class RestUtils {
 	}
 	/**
 	 * generate a random string.
-	 * 
+	 *
 	 * @param number $length        	
 	 * @return string
 	 */
