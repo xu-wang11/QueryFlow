@@ -308,6 +308,7 @@ class RestUtils {
 	 * @param string $srcip        	
 	 * @param sting $destip        	
 	 * @return json status
+	 * @todo the "*" handle isn't complemented well.
 	 */
 	public static function installFilter($host, $srcip, $destip, $action, $protocol) {
 	
