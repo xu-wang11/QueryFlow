@@ -30,6 +30,7 @@ CREATE TABLE oauth_jwt (client_id VARCHAR(80) NOT NULL, subject VARCHAR(80), pub
 
 ##Info##
 -  <a href="http://xu-wang11.github.io">Xu Wang</a> xu-wang11@mails.thu.edu.cn
+
 ##Reference##
 - <a href='https://github.com/Luracast/Restler'>Luracast/Restler</a>
 - <a href='https://github.com/bshaffer/oauth2-server-php'>bshaffer/oauth2-server-php</a>
