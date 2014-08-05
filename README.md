@@ -16,6 +16,7 @@ CREATE TABLE oauth_scopes (scope TEXT, is_default BOOLEAN);
 CREATE TABLE oauth_jwt (client_id VARCHAR(80) NOT NULL, subject VARCHAR(80), public_key VARCHAR(2000), CONSTRAINT jwt_client_id_pk PRIMARY KEY (client_id));</code>
 </pre>
 - change the code in Auth/Server.php, $dsn, $username, $password
+
 ###Fetch Token###
 - <code>curl http://localhost/QueryFlow/token -d "grant_type=client_credentials&&client_id=demoapp&&client_secret=demopass"</code>
 
