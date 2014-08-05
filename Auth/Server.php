@@ -156,6 +156,7 @@ class Server implements iAuthenticate {
 		$headers = array (
 				'Content-Type: application/json' 
 		);
+		
 		$device = curl_init ( $this->host . "/wm/core/controller/switches/json" );
 		curl_setopt ( $device, CURLOPT_POST, false );
 		curl_setopt ( $device, CURLOPT_HTTPHEADER, $headers );
@@ -172,7 +173,7 @@ class Server implements iAuthenticate {
 	 * @url GET deleteflow/{srcip}/{srcport}/{dstip}/{dstport}
 	 */
 	public static function deleteflow($srcip, $srcport, $dstip, $dstport) {
-		$flows = $this->getAllflow ( $this->$host );
+		$flows = $this->getAllflow ( $this->host );
 		
 		$headers = array (
 				'Content-Type: application/json' 
@@ -184,7 +185,7 @@ class Server implements iAuthenticate {
 					$json = array (
 							"name" => $flow_name 
 					);
-					$ch = curl_init ( $this->$host . "wm/staticflowentrypusher/json" );
+					$ch = curl_init ( $this->host . "wm/staticflowentrypusher/json" );
 					curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "DELETE" );
 					curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode ( $json ) );
 					curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
@@ -204,11 +205,11 @@ class Server implements iAuthenticate {
 	 * push flow to controller
 	 * @url GET addflow/{srcip}/{srcport}/{dstip}/{dstport}
 	 */
-	public static function addflow($srcip, $srcport, $dstip, $dstport) {
+	public function addflow($srcip, $srcport, $dstip, $dstport) {
 		$headers = array (
 				'Content-Type: application/json' 
 		);
-		$switches = $this->getSwitches ( $this->$host );
+		$switches = $this->getSwitches ();
 		foreach ( $switches as $switch ) {
 			$json = array ();
 			$json ['switch'] = $switch ['dpid'];
@@ -228,7 +229,7 @@ class Server implements iAuthenticate {
 			$json ['actions'] = 'output=4';
 			$json ['active'] = 'true';
 			
-			$ch = curl_init ( $this->$host . "wm/staticflowentrypusher/json" );
+			$ch = curl_init ( $this->host. "wm/staticflowentrypusher/json" );
 			curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
 			curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
 			curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode ( $json ) );
@@ -248,7 +249,7 @@ class Server implements iAuthenticate {
 		$headers = array (
 				'Content-Type: application/json' 
 		);
-		$device = curl_init ( $this->$host . "wm/firewall/rules/json" );
+		$device = curl_init ( $this->host . "wm/firewall/rules/json" );
 		curl_setopt ( $device, CURLOPT_POST, false );
 		curl_setopt ( $device, CURLOPT_HTTPHEADER, $headers );
 		curl_setopt ( $device, CURLOPT_RETURNTRANSFER, true );
@@ -270,7 +271,7 @@ class Server implements iAuthenticate {
 		$headers = array (
 				'Content-Type: application/json' 
 		);
-		$device = curl_init ( $this->$host . "wm/firewall/rules/json" );
+		$device = curl_init ( $this->host . "wm/firewall/rules/json" );
 		curl_setopt ( $device, CURLOPT_POST, false );
 		curl_setopt ( $device, CURLOPT_HTTPHEADER, $headers );
 		curl_setopt ( $device, CURLOPT_RETURNTRANSFER, true );
@@ -285,7 +286,7 @@ class Server implements iAuthenticate {
 				$json = array (
 						"ruleid" => $rule ['ruleid'] 
 				);
-				$ch = curl_init ( $this->$host . "wm/firewall/rules/json" );
+				$ch = curl_init ( $this->host . "wm/firewall/rules/json" );
 				curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "DELETE" );
 				curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode ( $json ) );
 				curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -310,7 +311,7 @@ class Server implements iAuthenticate {
 		$headers = array (
 				'Content-Type: application/json' 
 		);
-		$device = curl_init ( $this->$host . "wm/device/" );
+		$device = curl_init ( $this->host. "wm/device/" );
 		curl_setopt ( $device, CURLOPT_POST, false );
 		curl_setopt ( $device, CURLOPT_HTTPHEADER, $headers );
 		curl_setopt ( $device, CURLOPT_RETURNTRANSFER, true );
@@ -355,7 +356,7 @@ class Server implements iAuthenticate {
 				$json = array (
 						"ruleid" => $rule ['ruleid'] 
 				);
-				$ch = curl_init ( $this->$host . "wm/firewall/rules/json" );
+				$ch = curl_init ( $this->host . "wm/firewall/rules/json" );
 				curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "DELETE" );
 				curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode ( $json ) );
 				curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -374,7 +375,7 @@ class Server implements iAuthenticate {
 		$install_filter ['action'] = $action;
 		$install_filter ['nw-proto'] = $protocol;
 		$data_string = json_encode ( $install_filter );
-		$ch = curl_init ( $this->$host . "wm/firewall/rules/json" );
+		$ch = curl_init ( $this->host . "wm/firewall/rules/json" );
 		curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "POST" );
 		curl_setopt ( $ch, CURLOPT_POSTFIELDS, $data_string );
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -400,7 +401,7 @@ class Server implements iAuthenticate {
 				'Content-Type: application/json' 
 		);
 		// -------get all flow list
-		$flow_url = curl_init ( $this->$host . "wm/core/switch/all/flow/json" );
+		$flow_url = curl_init ( $this->host . "wm/core/switch/all/flow/json" );
 		curl_setopt ( $flow_url, CURLOPT_POST, false );
 		curl_setopt ( $flow_url, CURLOPT_HTTPHEADER, $headers );
 		curl_setopt ( $flow_url, CURLOPT_RETURNTRANSFER, true );
