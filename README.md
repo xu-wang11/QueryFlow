@@ -5,7 +5,7 @@ QueryFlow is a restful webservice. This api connect with floodlight to query flo
 ##Useage##
 Fetch Token:
 <p>
-<code>curl http://localhost/QueryFlow/public/token -d "grant_type=client_credentials&&client_id=demoapp&&client_secret=demopass"</code>
+<code>curl http://localhost/QueryFlow/token -d "grant_type=client_credentials&&client_id=demoapp&&client_secret=demopass"</code>
 </p>
 ##Info##
 -  <a href="http://xu-wang11.github.io">Xu Wang</a> xu-wang11@mails.thu.edu.cn
