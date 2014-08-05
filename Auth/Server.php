@@ -172,7 +172,7 @@ class Server implements iAuthenticate {
 	 * @access protected
 	 * @url GET deleteflow/{srcip}/{srcport}/{dstip}/{dstport}
 	 */
-	public static function deleteflow($srcip, $srcport, $dstip, $dstport) {
+	public function deleteflow($srcip, $srcport, $dstip, $dstport) {
 		$flows = $this->getAllflow ( $this->host );
 		
 		$headers = array (
