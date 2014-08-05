@@ -18,7 +18,7 @@ CREATE TABLE oauth_jwt (client_id VARCHAR(80) NOT NULL, subject VARCHAR(80), pub
 - change the code in Auth/Server.php, $dsn, $username, $password
 
 ###Fetch Token###
-- <code>curl http://localhost/QueryFlow/token -d "grant_type=client_credentials&&client_id=demoapp&&client_secret=demopass"</code>
+- <code>curl http://localhost/QueryFlow/token -d "grant_type=client_credentials&&client_id=XXX&&client_secret=XXX"</code>
 
 ###API Interface###
 - http://localhost/QueryFlow/getSwitch?access_token=XXX
