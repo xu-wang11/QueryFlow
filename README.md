@@ -10,9 +10,9 @@ QueryFlow is a restful webservice. This api connect with floodlight to query flo
 - http://localhost/QueryFlow/getSwitch?access_token=XXX
 - http://localhost/QueryFlow/addflow/srcip/srcport/dstip/dstport?access_token== XXX
 - http://localhost/QueryFlow/devices?access_token=XXX
-- http://localhost/QueryFlow/filter/enable_or_disable/protocol/srcip/dstip
-- http://localhost/QueryFlow/deleterule/srcip/dstip
-- http://localhost/QueryFlow/query/srcip/srcport/dstip/dstport
+- http://localhost/QueryFlow/filter/enable_or_disable/protocol/srcip/dstip?access_token== XXX
+- http://localhost/QueryFlow/deleterule/srcip/dstip?access_token== XXX
+- http://localhost/QueryFlow/query/srcip/srcport/dstip/dstport?access_token== XXX
 
 ##Info##
 -  <a href="http://xu-wang11.github.io">Xu Wang</a> xu-wang11@mails.thu.edu.cn
