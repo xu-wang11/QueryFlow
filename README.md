@@ -20,7 +20,7 @@ CREATE TABLE oauth_jwt (client_id VARCHAR(80) NOT NULL, subject VARCHAR(80), pub
 ###Fetch Token###
 - <code>curl http://localhost/QueryFlow/token -d "grant_type=client_credentials&&client_id=XXX&&client_secret=XXX"</code>
 
-###API Interface###
+###API Interface
 - http://localhost/QueryFlow/getSwitch?access_token=XXX
 - http://localhost/QueryFlow/addflow/srcip/srcport/dstip/dstport?access_token== XXX
 - http://localhost/QueryFlow/devices?access_token=XXX
