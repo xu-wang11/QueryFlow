@@ -28,8 +28,7 @@ CREATE TABLE oauth_jwt (client_id VARCHAR(80) NOT NULL, subject VARCHAR(80), pub
 - http://localhost/QueryFlow/deleterule/srcip/dstip?access_token== XXX
 - http://localhost/QueryFlow/query/srcip/srcport/dstip/dstport?access_token== XXX
 
-##Implementation##
-###Interfaces###
+###Implement###
 - If you want to add new API to the web service. You can add new function in Auth/Server.php as below:
 <pre lang='php'>
 <code>
@@ -45,7 +44,7 @@ public function newRouter(param1, param2, ...)
 </pre>
  
 
-##Info## 
+## Info ## 
 -  <a href="http://xu-wang11.github.io">Xu Wang</a> xu-wang11@mails.thu.edu.cn
 
 ##Reference##
