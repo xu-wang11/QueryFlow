@@ -44,7 +44,7 @@ public function newRouter(param1, param2, ...)
 </pre>
  
 
-##Info## 
+##Info 
 - <a href="http://xu-wang11.github.io">Xu Wang</a> xu-wang11@mails.thu.edu.cn
 
 ##Reference##
