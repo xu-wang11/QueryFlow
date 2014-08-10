@@ -34,8 +34,8 @@ CREATE TABLE oauth_jwt (client_id VARCHAR(80) NOT NULL, subject VARCHAR(80), pub
 <pre lang='php'>
 <code>
 /**
- * @access protected // this is for authentication
- * @ url /newRouter/{param1}/{param2}/... // this is for route
+ *@access protected // this is for authentication
+ *@ url /newRouter/{param1}/{param2}/... // this is for route
  */
 public function newRouter(param1, param2, ...)
 {
@@ -44,6 +44,7 @@ public function newRouter(param1, param2, ...)
 </code>
 </pre>
  
+
 ##Info## 
 -  <a href="http://xu-wang11.github.io">Xu Wang</a> xu-wang11@mails.thu.edu.cn
 
